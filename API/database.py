@@ -2,7 +2,6 @@ import math
 from gettext import install
 from sre_constants import FAILURE
 from tokenize import Double
-from fpdf import FPDF
 from flask import make_response
 import hashlib
 import sqlalchemy
