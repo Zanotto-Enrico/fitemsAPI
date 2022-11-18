@@ -58,6 +58,9 @@ def login():
 	if(check_user_login(request.form.get('username'),request.form.get('password')) == Return.SUCCESS):
 		session["user"] = request.form.get("username")
 		return 'LOGGED IN'
+	if(check_user_login(request.args.get('username'),request.args.get('password')) == Return.SUCCESS):
+		session["user"] = request.form.get("username")
+		return 'LOGGED IN'
 	return 'ERROR'
 
 @app.route('/makepost', methods=['POST'])
