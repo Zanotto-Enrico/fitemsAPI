@@ -1,11 +1,17 @@
-from flask import Flask
+from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from database import *
 from flask import request
+from werkzeug.utils import secure_filename
+import os
 
+UPLOAD_FOLDER = './pictures'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "JG{~^VQnAX8dK*4P'=/XTg^rBhH_psx+/zK9#>YkR_bWd7Av"
 session = dict()
+
 
 @app.route('/')
 def index():
@@ -28,6 +34,12 @@ def index():
 	info += "<h4> Passare opzionalmente limite (un limite massimo di messaggi)(vale 20 di default)</h4> /mychats?utente=mario97&limite=10</br></br>"
 	info += "<h2> /visualizza marcare i messaggi di una chat come 'visualizzati' (POST) (DEVI ESSERE LOGGATO)</h2>" 
 	info += "<h4> Passare mittente(il mittente dei messaggi) facendo un POST alla pagina </h4> /visualizza</br></br>"
+	info += "<h2> /uploadImage aggiornare la foto di un post (POST) (DEVI ESSERE LOGGATO)</h2>" 
+	info += "<h4> Passare un multipart/form-data contenente l'immagine e l'idPost facendo un POST alla pagina </h4> /uploadImage</br></br>"
+	info += "<h2> /getImage per ottenere l'immagine di un post (GET)</h2> </br>"
+	info += "<h4> Passare come parametro l'idPost del post voluto</h4> /getImage?idPost=1 </br></br>"
+	
+	
 	return info
 
 @app.route('/utenti', methods=['GET'])
@@ -108,3 +120,44 @@ def visualizza():
 
 	visualizza_messaggi(session["user"],request.form.get('mittente'))
 	return 'SUCCESS'
+
+@app.route('/uploadImage', methods=['POST'])
+def uploadImage():
+	if "user" not in session:
+		return 'FAILURE'
+	if request.form.get('idPost') == None:
+		return 'FAILURE'
+
+	if not request.files:
+		return "FAILURE"
+
+	file = request.files['immagine']
+	if file.filename == '':
+		return "FAILURE"
+		
+	if file and allowed_file(file.filename):
+		post = get_post(request.form.get('idPost'))
+
+		filename = "post_" + str(post[1]['id_post'])+'.'+file.filename.rsplit('.', 1)[1].lower()
+		
+		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+		return "SUCCESS"
+	return "FAILURE"
+
+
+
+@app.route('/getImage', methods=['GET'])
+def getImage():
+	if "user" not in session or request.args.get('idPost') == None:
+		return 'FAILURE'
+	idPost = request.args.get('idPost')
+	for i in ALLOWED_EXTENSIONS:
+		if(os.path.exists("pictures/post_"+idPost+"."+i)):
+			return send_from_directory(app.config["UPLOAD_FOLDER"], "post_"+idPost+"."+i)
+	return "NO FILE FOUND"
+		
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

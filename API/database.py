@@ -245,7 +245,7 @@ def get_post(idPost):
 
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
-        return session.query(Post).filter(Post.id_post == idPost).all()
+        return make_dictonary(session.query(Post).filter(Post.id_post == idPost).all(), Post)
     except Exception as e:
         print("[!] - Errore nel caricamento del post!\n" +
               "      Vedi metodo get_post()\n" +
@@ -301,7 +301,7 @@ def add_image_path(idPost, path):
     try:
         session.query(Post).filter(Post.id_post == idPost).update({'image_path':path})
         session.commit()
-       
+
     except Exception as e:
         print("[!] - Errore nel caricamento della image_path nel DB!\n" +
               "      Vedi metodo add_image_path()\n" +

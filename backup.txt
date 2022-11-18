@@ -21,6 +21,7 @@ descrizione VARCHAR(350) NOT NULL,
 stato INTEGER NOT NULL,
 data DATE NOT NULL,
 username VARCHAR(50) NOT NULL,
+image_path VARCHAR(255),
 FOREIGN KEY (username) REFERENCES Utente(username)
 );
 
