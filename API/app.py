@@ -59,104 +59,108 @@ def register():
 						request.form.get('email'),request.form.get('data'),request.form.get('password'),
 						request.form.get('latitudine'),request.form.get('longitudine'))
 	if(ret == Return.SUCCESS):
-		return 'SUCCESS'
+		return response('SUCCESS')
 	elif(ret == Return.EXISTS):
-		return 'EXIST'
+		return response('EXIST')
 	else:
-		return 'FAILURE' 
+		return response('FAILURE' )
 
 @app.route('/login', methods=['POST'])
 def login():
 	if(check_user_login(request.form.get('username'),request.form.get('password')) == Return.SUCCESS):
 		session["user"] = request.form.get("username")
-		return 'LOGGED IN'
+		return response('LOGGED IN')
 	if(check_user_login(request.args.get('username'),request.args.get('password')) == Return.SUCCESS):
 		session["user"] = request.form.get("username")
-		return 'LOGGED IN'
-	return 'ERROR'
+		return response('LOGGED IN')
+	return response('ERROR')
 
 @app.route('/makepost', methods=['POST'])
 def makepost():
 	if "user" not in session:
-		return 'FAILURE'
+		return response('FAILURE')
 
 	ret = create_new_post(request.form.get('titolo'),request.form.get('descrizione'),session["user"])
 	if(ret == Return.SUCCESS):
-		return 'SUCCESS'
+		return response('SUCCESS')
 	else:
-		return 'FAILURE' 
+		return response('FAILURE' )
 
 @app.route('/sendmessage', methods=['POST'])
 def makemessage():
 	if "user" not in session:
-		return 'FAILURE'
+		return response('FAILURE')
 
 	ret = create_new_message(session["user"], request.form.get('destinatario'), request.form.get('contenuto'))
 	if(ret == Return.SUCCESS):
-		return 'SUCCESS'
+		return response('SUCCESS')
 	else:
-		return 'FAILURE' 
+		return response('FAILURE' )
 
 @app.route('/mychats', methods=['GET'])
 def mychats():
 	if "user" not in session:
-		return 'FAILURE'
+		return response('FAILURE')
 	return get_chats(session["user"])
 
 @app.route('/chat', methods=['GET'])
 def chat():
 	if "user" not in session:
-		return 'FAILURE'
+		return response('FAILURE')
 	if request.args.get('utente') == None:
-		return 'FAILURE'
+		return response('FAILURE')
 	return get_chat(session["user"],request.args.get('utente'), request.args.get('limite'))
 
 @app.route('/visualizza', methods=['POST'])
 def visualizza():
 	if "user" not in session:
-		return 'FAILURE'
+		return response('FAILURE')
 	if request.form.get('mittente') == None:
-		return 'FAILURE'
+		return response('FAILURE')
 
 	visualizza_messaggi(session["user"],request.form.get('mittente'))
-	return 'SUCCESS'
+	return response('SUCCESS')
 
 @app.route('/uploadImage', methods=['POST'])
 def uploadImage():
 	if "user" not in session:
-		return 'FAILURE'
+		return response('FAILURE')
 	if request.form.get('idPost') == None:
-		return 'FAILURE'
+		return response('FAILURE')
 
 	if not request.files:
-		return "FAILURE"
+		return response("FAILURE")
 
 	file = request.files['immagine']
 	if file.filename == '':
-		return "FAILURE"
+		return response("FAILURE")
 		
 	if file and allowed_file(file.filename):
 		post = get_post_by_id(request.form.get('idPost'))
 		filename = "post_" + str(post[1]['id_post'])+'.'+file.filename.rsplit('.', 1)[1].lower()
 		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 		add_image_path(idPost= request.form.get('idPost'), path="pictures/"+filename)
-		return "SUCCESS"
-	return "FAILURE"
+		return response("SUCCESS")
+	return response("FAILURE")
 
 
 
 @app.route('/getImage', methods=['GET'])
 def getImage():
 	if request.args.get('idPost') == None:
-		return 'FAILURE'
+		return response('FAILURE')
 	idPost = request.args.get('idPost')
 	for i in ALLOWED_EXTENSIONS:
 		if(os.path.exists("pictures/post_"+idPost+"."+i)):
 			return send_from_directory(app.config["UPLOAD_FOLDER"], "post_"+idPost+"."+i)
-	return "NO FILE FOUND"
+	return response("NO FILE FOUND")
 		
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def response(message):
+	print({"status":message})
+	return {"status":message}
