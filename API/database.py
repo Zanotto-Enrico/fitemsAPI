@@ -296,3 +296,16 @@ def visualizza_messaggi(destinatario,mittente):
         print(e)
         return Return.FAILURE
 
+def add_image_path(idPost, path):
+    if(check_connection() == Return.FAILURE): return Return.FAILURE
+    try:
+        session.query(Post).filter(Post.id_post == idPost).update({'image_path':path})
+        session.commit()
+       
+    except Exception as e:
+        print("[!] - Errore nel caricamento della image_path nel DB!\n" +
+              "      Vedi metodo add_image_path()\n" +
+              "      Per maggiori info:\n")
+        print(e)
+        return Return.FAILURE
+
