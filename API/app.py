@@ -136,7 +136,7 @@ def uploadImage():
 		return "FAILURE"
 		
 	if file and allowed_file(file.filename):
-		post = get_post(request.form.get('idPost'))
+		post = get_post_by_id(request.form.get('idPost'))
 
 		filename = "post_" + str(post[1]['id_post'])+'.'+file.filename.rsplit('.', 1)[1].lower()
 		
@@ -148,7 +148,7 @@ def uploadImage():
 
 @app.route('/getImage', methods=['GET'])
 def getImage():
-	if "user" not in session or request.args.get('idPost') == None:
+	if request.args.get('idPost') == None:
 		return 'FAILURE'
 	idPost = request.args.get('idPost')
 	for i in ALLOWED_EXTENSIONS:

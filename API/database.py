@@ -241,7 +241,7 @@ def get_post(limit, latitude, longitude):
         print(e)
         return Return.FAILURE
 
-def get_post(idPost):
+def get_post_by_id(idPost):
 
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
