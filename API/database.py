@@ -65,6 +65,7 @@ class Post(Base):
     stato = Column(Integer)
     data = Column(Date)
     username = Column(String)
+    image_path = Column(String)
     
     def __repr__(self):
         return "<Corso (titolo: %s, descrizione: %s, utente: %s)>" % (self.titolo, self.descrizione, self.username)
@@ -240,6 +241,18 @@ def get_post(limit, latitude, longitude):
         print(e)
         return Return.FAILURE
 
+def get_post(idPost):
+
+    if(check_connection() == Return.FAILURE): return Return.FAILURE
+    try:
+        return session.query(Post).filter(Post.id_post == idPost).all()
+    except Exception as e:
+        print("[!] - Errore nel caricamento del post!\n" +
+              "      Vedi metodo get_post()\n" +
+              "      Per maggiori info:\n")
+        print(e)
+        return Return.FAILURE
+
 def get_chats(username):
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
@@ -282,5 +295,4 @@ def visualizza_messaggi(destinatario,mittente):
               "      Per maggiori info:\n")
         print(e)
         return Return.FAILURE
-
 
