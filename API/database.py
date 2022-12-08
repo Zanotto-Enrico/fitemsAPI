@@ -15,7 +15,7 @@ from datetime import *
 # VARIABILI GLOBALI CHE PERMETTONO DI CONNETTERSI AL DATABASE 
 # Se si necessita di cambiare la modalità di connessione basta
 # modificare il contenuto di queste due variabili
-address = "192.168.1.200"
+address = "localhost"
 port = "3306"
 database = "fitems"
 session = None
