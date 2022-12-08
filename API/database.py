@@ -147,9 +147,29 @@ def get_user_info(username):
     check_connection()
     info = make_dictonary(session.query(Utente).filter(Utente.username == username).all(), Utente)
     info[list(info.keys())[0]]['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
-     
     return info
 
+#---- Metodo che per aggiornare le info personali di un utente
+def update_user_info(username,nome,cognome,latitudine,longitudine):
+    if(check_connection() == Return.FAILURE): return Return.FAILURE
+    try:
+        query = session.query(Utente).filter(Utente.username == username)
+        if(nome != None and nome != ''):
+            query.update({'nome': nome})
+        if(cognome != None and cognome != ''):
+            query.update({'cognome': cognome})
+        if(latitudine != None and latitudine != ''):
+            query.update({'latitudine': latitudine})
+        if(longitudine != None and longitudine != ''):
+            query.update({'longitudine': longitudine})
+        session.commit()
+        return Return.SUCCESS
+    except Exception as e:
+        print("[!] - Errore nell'aggiornamento dei dati personali!\n" +
+              "      Vedi metodo update_user_info()\n" +
+              "      Per maggiori info:\n")
+        print(e)
+        return Return.FAILURE
 
 #---- Metodo utilizzato per inserire un nuovo utente nella base di dati
 def register_user(username, nome, cognome, email, password, latitudine, longitudine):

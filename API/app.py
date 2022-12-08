@@ -43,11 +43,14 @@ def index():
 	
 	return info
 
-@app.route('/myInfo', methods=['GET'])
+@app.route('/myInfo', methods=['GET','POST'])
 def utenti():
 	if "user" not in session:
 		return response('FAILURE')
-	return get_user_info(session['user'])
+	if request.method == 'GET':
+		return get_user_info(session['user'])
+	if request.method == 'POST':
+		return update_user_info(session['user'],request.form.get('nome'), request.form.get('cognome'), request.form.get('latitudine'), request.form.get('longitudine'))
 
 @app.route('/post', methods=['GET'])
 def post():
