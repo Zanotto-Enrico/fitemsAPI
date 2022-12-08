@@ -50,7 +50,10 @@ def utenti():
 	if request.method == 'GET':
 		return get_user_info(session['user'])
 	if request.method == 'POST':
-		return update_user_info(session['user'],request.form.get('nome'), request.form.get('cognome'), request.form.get('latitudine'), request.form.get('longitudine'))
+		ret = update_user_info(session['user'],request.form.get('nome'), request.form.get('cognome'), request.form.get('latitudine'), request.form.get('longitudine'))
+		if(ret == Return.SUCCESS):
+			return response('SUCCESS')
+	return response('FAILURE')
 
 @app.route('/post', methods=['GET'])
 def post():
