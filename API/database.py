@@ -146,7 +146,7 @@ def check_user_login(username, password):
 def get_user_info(username):
     check_connection()
     info = make_dictonary(session.query(Utente).filter(Utente.username == username).all(), Utente)
-    info['postPubblicati'] = session.query(Post).filter(Post.username == username).group_by(Post.username).count()
+    info[list(info.keys())[0]]['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
      
     return info
 
