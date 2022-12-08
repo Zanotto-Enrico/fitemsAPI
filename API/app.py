@@ -15,11 +15,12 @@ session = dict()
 
 @app.route('/')
 def index():
-	info = "<h2>/utenti per listare gli utenti (GET)     (da rimuovere)</h2> </br></br>"
-	info += "<h2> /register per registrare un nuovo utente (POST)</h2>" 
-	info += "<h4> Passare username, nome, cognome,email, data (intesa come data di nascita),latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /register</br></br>"
+	info = "<h2> /register per registrare un nuovo utente (POST)</h2>" 
+	info += "<h4> Passare username, nome, cognome,email, latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /register</br></br>"
 	info += "<h2> /login per eseguire il login e aprire una sessione (POST)</h2>" 
 	info += "<h4> Passare username e password facendo un POST alla pagina </h4> /login</br></br>"
+	info += "<h2>/myInfo per listare le mie info personali (GET)     </h2> "
+	info += "<h4> Questa chiamata non ha parametri</h4> /myInfo</br></br>"
 	info += "<h2> /post per elencare i post (GET)</h2> </br>"
 	info += "<h4> Per settare un limite massimo di post elencati</h4> /post?limite=3 </br></br>"
 	info += "<h4> Per settare un filtro basato sulla posizione gps fornire le coordinate in decimale</h4>/post?latitudine=45.1234567&longitudine=13.1234567</br></br>"
@@ -42,9 +43,11 @@ def index():
 	
 	return info
 
-@app.route('/utenti', methods=['GET'])
+@app.route('/myInfo', methods=['GET'])
 def utenti():
-	return get_users()
+	if "user" not in session:
+		return response('FAILURE')
+	return get_user_info(session['user'])
 
 @app.route('/post', methods=['GET'])
 def post():
@@ -56,7 +59,7 @@ def post():
 @app.route('/register', methods=['POST'])
 def register():
 	ret = register_user(request.form.get('username'),request.form.get('nome'),request.form.get('cognome'),
-						request.form.get('email'),request.form.get('data'),request.form.get('password'),
+						request.form.get('email'),request.form.get('password'),
 						request.form.get('latitudine'),request.form.get('longitudine'))
 	if(ret == Return.SUCCESS):
 		return response('SUCCESS')

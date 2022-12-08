@@ -43,7 +43,6 @@ class Utente(Base):
     nome = Column(String)
     cognome = Column(String)
     email = Column(String)
-    nascita = Column(Date)
     password_hash = Column(String)
     longitudine = Column(Float)
     latitudine = Column(Float)
@@ -143,21 +142,23 @@ def check_user_login(username, password):
 
     return Return.FAILURE
 
-#---- Metodo che contiene una query che legge tutti i gli utenti della base di dati
-#     e ne restituisce un dizionario
-def get_users():
+#---- Metodo che esegue una query per ottenere le informazioni personali di un utente specifico
+def get_user_info(username):
     check_connection()
-    return make_dictonary(session.query(Utente).all(), Utente)
+    info = make_dictonary(session.query(Utente).filter(Utente.username == username).all(), Utente)
+    info['postPubblicati'] = session.query(Post).filter(Post.username == username).group_by(Post.username).count()
+     
+    return info
 
 
 #---- Metodo utilizzato per inserire un nuovo utente nella base di dati
-def register_user(username, nome, cognome, email, nascita, password, latitudine, longitudine):
+def register_user(username, nome, cognome, email, password, latitudine, longitudine):
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
         # prima di tutto genero l'hash della nuova password
         passwordHash = hashlib.sha256(password.encode()).hexdigest()
         # creo il nuovo oggetto da inserire nella tabella utenti
-        new_utente = Utente(username = username, nome = nome, cognome = cognome, email = email, nascita = nascita, 
+        new_utente = Utente(username = username, nome = nome, cognome = cognome, email = email,
                             password_hash = passwordHash, latitudine = latitudine, longitudine = longitudine)
         
         # controllo anche a mano se è già presente l'utente che si vuole inserire in modo 
