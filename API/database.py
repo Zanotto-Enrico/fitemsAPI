@@ -18,7 +18,6 @@ from datetime import *
 address = "localhost"
 port = "3306"
 database = "fitems"
-session = None
 # per il locale usa '127.0.0.1:3306', 'fitems'
 #-------------------------------------------------------------
 
@@ -150,7 +149,7 @@ def get_user_info(username):
     return info
 
 #---- Metodo che per aggiornare le info personali di un utente
-def update_user_info(username,nome,cognome,latitudine,longitudine):
+def update_user_info(username,nome,cognome,email,latitudine,longitudine):
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
         query = session.query(Utente).filter(Utente.username == username)
@@ -158,6 +157,8 @@ def update_user_info(username,nome,cognome,latitudine,longitudine):
             query.update({'nome': nome})
         if(cognome != None and cognome != ''):
             query.update({'cognome': cognome})
+        if(email != None and email != ''):
+            query.update({'email': cognome})
         if(latitudine != None and latitudine != ''):
             query.update({'latitudine': latitudine})
         if(longitudine != None and longitudine != ''):
