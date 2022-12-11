@@ -18,6 +18,7 @@ from datetime import *
 address = "localhost"
 port = "3306"
 database = "fitems"
+session = None
 # per il locale usa '127.0.0.1:3306', 'fitems'
 #-------------------------------------------------------------
 
