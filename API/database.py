@@ -145,8 +145,9 @@ def check_user_login(username, password):
 #---- Metodo che esegue una query per ottenere le informazioni personali di un utente specifico
 def get_user_info(username):
     check_connection()
-    info = make_dictonary(session.query(Utente).filter(Utente.username == username).all(), Utente)
-    info[list(info.keys())[0]]['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
+    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine).filter(Utente.username == username).all(), Utente)
+    info = info[list(info.keys())[0]];
+    info['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
     return info
 
 #---- Metodo che per aggiornare le info personali di un utente
