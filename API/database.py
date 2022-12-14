@@ -117,10 +117,12 @@ def make_dictonary(query):
 
 def make_list_of_dictonary(query,nameOfList):
     diz = dict()
-    diz['nResults'] = len(query)
+    i = 0
     lista = []
     for u in query:
+        i = i + 1
         lista.append(u._asdict())
+    diz['nResults'] = i
     diz[nameOfList] = lista
     return diz
 
@@ -261,7 +263,7 @@ def get_post(limit, latitude, longitude):
                                           Utente.longitudine.between(min_long,max_long)).limit(limit).all(), "post")
     
         # altrimenti non filtro in base alla posizione gps
-        return make_list_of_dictonary(session.query(Post).limit(limit).one(),"post")
+        return make_list_of_dictonary(session.query(Post).limit(limit).all(),"post")
 
     except Exception as e:
         print("[!] - Errore nel caricamento dei post!\n" +
