@@ -112,10 +112,16 @@ def check_connection():
 
     return Return.SUCCESS
 
-def make_dictonary(query,table):
+def make_dictonary(query):
+    return  query._asdict()
+
+def make_list_of_dictonary(query,nameOfList):
     diz = dict()
+    diz['nResults'] = len(query)
+    lista = []
     for u in query:
-        diz[u._asdict()[inspect(table).primary_key[0].name]] = u._asdict()
+        lista.append(u._asdict())
+    diz[nameOfList] = lista
     return diz
 
 def does_user_exist(username):
@@ -145,8 +151,7 @@ def check_user_login(username, password):
 #---- Metodo che esegue una query per ottenere le informazioni personali di un utente specifico
 def get_user_info(username):
     check_connection()
-    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine).filter(Utente.username == username).all(), Utente)
-    info = info[list(info.keys())[0]];
+    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine).filter(Utente.username == username).one())
     info['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
     return info
 
@@ -251,12 +256,12 @@ def get_post(limit, latitude, longitude):
             max_lat  = float(latitude) + (float(radius) / 6378000) * (180 / 3.141592)
             min_long = float(longitude) - (float(radius) / 6378000) * (180 / 3.141592) / math.cos(float(latitude) * 3.141592/180)
             max_long = float(longitude) + (float(radius) / 6378000) * (180 / 3.141592) / math.cos(float(latitude) * 3.141592/180)
-            return make_dictonary(session.query(Post).filter(Utente.username == Post.username).filter(
-                                Utente.latitudine.between(min_lat,max_lat)).filter(
-                                Utente.longitudine.between(min_long,max_long)).limit(limit).all(), Post)
+            return make_list_of_dictonary(session.query(Post).filter(Utente.username == Post.username).filter(
+                                          Utente.latitudine.between(min_lat,max_lat)).filter(
+                                          Utente.longitudine.between(min_long,max_long)).limit(limit).all(), "post")
     
         # altrimenti non filtro in base alla posizione gps
-        return make_dictonary(session.query(Post).limit(limit).all(), Post)
+        return make_list_of_dictonary(session.query(Post).limit(limit).one(),"post")
 
     except Exception as e:
         print("[!] - Errore nel caricamento dei post!\n" +
@@ -269,7 +274,7 @@ def get_post_by_id(idPost):
 
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
-        return make_dictonary(session.query(Post).filter(Post.id_post == idPost).all(), Post)
+        return make_dictonary(session.query(Post).filter(Post.id_post == idPost).one())
     except Exception as e:
         print("[!] - Errore nel caricamento del post!\n" +
               "      Vedi metodo get_post()\n" +
@@ -280,9 +285,9 @@ def get_post_by_id(idPost):
 def get_chats(username):
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
-        return make_dictonary(session.query(Utente.username
+        return make_list_of_dictonary(session.query(Utente.username
                             ).filter(or_(Utente.username == Messaggio.mittente, Utente.username == Messaggio.destinatario)
-                            ).filter(Utente.username != username).all(), Utente)
+                            ).filter(Utente.username != username).all(),"chats")
     except Exception as e:
         print("[!] - Errore nel caricamento delle chat!\n" +
               "      Vedi metodo get_chats()\n" +
@@ -295,10 +300,10 @@ def get_chat(username1, username2, limit):
     if( limit == None or int(limit) > 100):
         limit = 20
     try:
-        return make_dictonary(session.query(Messaggio
-                        ).filter(or_(and_(username1 == Messaggio.mittente, username2 == Messaggio.destinatario), 
-                                     and_(username2 == Messaggio.mittente, username1 == Messaggio.destinatario))
-                        ).order_by(Messaggio.time.desc()).limit(limit).all(), Messaggio)
+        return make_list_of_dictonary(session.query(Messaggio
+                                     ).filter(or_(and_(username1 == Messaggio.mittente, username2 == Messaggio.destinatario), 
+                                                  and_(username2 == Messaggio.mittente, username1 == Messaggio.destinatario))
+                                     ).order_by(Messaggio.time.desc()).limit(limit).all(),"chat")
     except Exception as e:
         print("[!] - Errore nel caricamento della chat!\n" +
               "      Vedi metodo get_chat()\n" +
