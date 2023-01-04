@@ -47,6 +47,7 @@ class Utente(Base):
     password_hash = Column(String)
     longitudine = Column(Float)
     latitudine = Column(Float)
+    punteggio = Column(Integer)
     
     def __repr__(self):
         return "<Utente (username: %s, nome: %s, congome: %s)>" % (self.username, self.nome, self.cognome)
@@ -154,8 +155,10 @@ def check_user_login(username, password):
 #---- Metodo che esegue una query per ottenere le informazioni personali di un utente specifico
 def get_user_info(username):
     check_connection()
-    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine, Utente.nascita).filter(Utente.username == username).one())
+    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine, Utente.nascita, Utente.punteggio).filter(Utente.username == username).one())
     info['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
+    if(info['nascita'] <= datetime.date.today().replace(year=datetime.date.today().year - 18)):
+    	info.pop('punteggio',None)
     return info
 
 #---- Metodo che per aggiornare le info personali di un utente
@@ -191,7 +194,7 @@ def register_user(username, nome, cognome, email, password, latitudine, longitud
         # genero l'hash della nuova password
         passwordHash = hashlib.sha256(password.encode()).hexdigest()
         # creo il nuovo oggetto da inserire nella tabella utenti
-        new_utente = Utente(username = username, nome = nome, cognome = cognome, email = email,
+        new_utente = Utente(username = username, nome = nome, cognome = cognome, email = email, punteggio = 0
                             password_hash = passwordHash, latitudine = latitudine, longitudine = longitudine, nascita = data)
         
         # controllo anche a mano se è già presente l'utente che si vuole inserire in modo 

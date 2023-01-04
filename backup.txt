@@ -10,7 +10,8 @@ email VARCHAR(50) NOT NULL,
 password_hash VARCHAR(64) NOT NULL,
 nascita DATE NOT NULL,
 latitudine DOUBLE NOT NULL,
-longitudine DOUBLE NOT NULL
+longitudine DOUBLE NOT NULL,
+punteggio INTEGER NOT NULL
 );
 
 
