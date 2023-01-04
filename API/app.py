@@ -16,13 +16,13 @@ session = dict()
 @app.route('/')
 def index():
 	info = "<h2> /register per registrare un nuovo utente (POST)</h2>" 
-	info += "<h4> Passare username, password, nome, cognome,email, latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /register</br></br>"
+	info += "<h4> Passare username, password, nome, cognome, data (intesa come nascita), email, latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /register</br></br>"
 	info += "<h2> /login per eseguire il login e aprire una sessione (POST)</h2>" 
 	info += "<h4> Passare username e password facendo un POST alla pagina </h4> /login</br></br>"
 	info += "<h2> /myInfo per listare le mie info personali (GET) (DEVI ESSERE LOGGATO) </h2> "
 	info += "<h4> Questa chiamata non ha parametri</h4> /myInfo</br></br>"
 	info += "<h2> /myInfo per aggiornare le mie info personali (POST) (DEVI ESSERE LOGGATO) </h2> "
-	info += "<h4> Passare i parametri che si vole aggiornare scegliendo un insieme tra i seguenti: nome, cognome,email,latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /myInfo</br></br>"
+	info += "<h4> Passare i parametri che si vole aggiornare scegliendo un insieme tra i seguenti: nome, cognome,data (nascita), email,latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /myInfo</br></br>"
 	info += "<h2> /post per elencare i post (GET)</h2> </br>"
 	info += "<h4> Per settare un limite massimo di post elencati</h4> /post?limite=3 </br></br>"
 	info += "<h4> Per settare un filtro basato sulla posizione gps fornire le coordinate in decimale</h4>/post?latitudine=45.1234567&longitudine=13.1234567</br></br>"
@@ -52,7 +52,7 @@ def utenti():
 	if request.method == 'GET':
 		return get_user_info(session['user'])
 	if request.method == 'POST':
-		ret = update_user_info(session['user'],request.form.get('nome'), request.form.get('cognome'),request.form.get('email'), request.form.get('latitudine'), request.form.get('longitudine'))
+		ret = update_user_info(session['user'],request.form.get('nome'), request.form.get('cognome'),request.form.get('email'), request.form.get('latitudine'), request.form.get('longitudine'), request.form.get('data'))
 		if(ret == Return.SUCCESS):
 			return response('SUCCESS')
 	return response('FAILURE')
@@ -68,7 +68,8 @@ def post():
 def register():
 	ret = register_user(request.form.get('username'),request.form.get('nome'),request.form.get('cognome'),
 						request.form.get('email'),request.form.get('password'),
-						request.form.get('latitudine'),request.form.get('longitudine'))
+						request.form.get('latitudine'),request.form.get('longitudine'),
+						request.form.get('data'))
 	if(ret == Return.SUCCESS):
 		return response('SUCCESS')
 	elif(ret == Return.EXISTS):
