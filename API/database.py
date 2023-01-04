@@ -232,6 +232,30 @@ def create_new_post(titolo,descrizione,username):
         print(e)
         return Return.FAILURE
 
+def closePost(idPost,proprietario,cercatore):
+    if(check_connection() == Return.FAILURE): return Return.FAILURE
+    if(idPost != None and idPost != "" and cercatore != proprietario):
+        try:
+            query = session.query(Post).filter(Post.id_post == idPost)
+            if(query.first()._asdict()['username'] == proprietario or
+               query.first()._asdict()['stato'] != 0):
+                return Return.FAILURE
+            query.update({'stato': 1})
+            
+            if(cercatore != None and cercatore != ""):
+                query = session.query(Utente).filter(Utente.username == cercatore)
+                query.update({'punteggio': str(int(query.first()._asdict()['punteggio'])+200)})
+            session.commit()
+            return Return.SUCCESS
+        except Exception as e:
+            session.rollback()
+            print("[!] - Errore nella chiusura di un post!\n" +
+              "      Vedi metodo closePost()\n" +
+              "      Per maggiori info:\n")
+            print(e)
+    return Return.FAILURE
+
+
 def create_new_message(mittente,destinatario,contenuto):
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:

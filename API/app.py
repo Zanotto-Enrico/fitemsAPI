@@ -28,6 +28,8 @@ def index():
 	info += "<h4> Per settare un filtro basato sulla posizione gps fornire le coordinate in decimale</h4>/post?latitudine=45.1234567&longitudine=13.1234567</br></br>"
 	info += "<h2> /makepost per creare un nuovo post (POST) (DEVI ESSERE LOGGATO)</h2>" 
 	info += "<h4> Passare titolo, descrizione, facendo un POST alla pagina </h4> /makepost</br></br>"
+	info += "<h2> /itemfound per chiudere un post aperto (POST) (DEVI ESSERE LOGGATO)</h2>" 
+	info += "<h4> Passare postId e username (di chi lo ha trovato, opzionale), facendo un POST alla pagina </h4> /itemfound</br></br>"
 	info += "<h2> /sendmessage per inviare un messaggio (POST) (DEVI ESSERE LOGGATO)</h2>" 
 	info += "<h4> Passare destinatario, contenuto, facendo un POST alla pagina </h4> /sendmessage</br></br>"
 	info += "<h2> /mychats per elencare le mie chat attive (GET) (DEVI ESSERE LOGGATO)</h2> </br>"
@@ -97,6 +99,14 @@ def makepost():
 		return response('SUCCESS')
 	else:
 		return response('FAILURE' )
+
+@app.route('/itemfound', methods=['POST'])
+def itemFound():
+    if "user" in session:
+        ret = closePost(request.form.get('postId'),session['user'],request.form.get('username'))
+        if(ret == Return.SUCCESS):
+            return response('SUCCESS')
+    return response('FAILURE')
 
 @app.route('/sendmessage', methods=['POST'])
 def makemessage():
