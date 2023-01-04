@@ -43,7 +43,7 @@ class Utente(Base):
     nome = Column(String)
     cognome = Column(String)
     email = Column(String)
-    data = Column(Date)
+    nascita = Column(Date)
     password_hash = Column(String)
     longitudine = Column(Float)
     latitudine = Column(Float)
@@ -154,7 +154,7 @@ def check_user_login(username, password):
 #---- Metodo che esegue una query per ottenere le informazioni personali di un utente specifico
 def get_user_info(username):
     check_connection()
-    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine, Utente.data).filter(Utente.username == username).one())
+    info = make_dictonary(session.query(Utente.username, Utente.nome, Utente.cognome, Utente.email, Utente.latitudine, Utente.longitudine, Utente.nascita).filter(Utente.username == username).one())
     info['postPubblicati'] = session.query(Post.username).filter(Post.username == username).group_by(Post.username).count()
     return info
 
@@ -174,7 +174,7 @@ def update_user_info(username,nome,cognome,email,latitudine,longitudine,data):
         if(longitudine != None and longitudine != ''):
             query.update({'longitudine': longitudine})
         if(data != None and data != ''):
-            query.update({'data': data})
+            query.update({'nascita': data})
         session.commit()
         return Return.SUCCESS
     except Exception as e:
@@ -192,7 +192,7 @@ def register_user(username, nome, cognome, email, password, latitudine, longitud
         passwordHash = hashlib.sha256(password.encode()).hexdigest()
         # creo il nuovo oggetto da inserire nella tabella utenti
         new_utente = Utente(username = username, nome = nome, cognome = cognome, email = email,
-                            password_hash = passwordHash, latitudine = latitudine, longitudine = longitudine, data = data)
+                            password_hash = passwordHash, latitudine = latitudine, longitudine = longitudine, nascita = data)
         
         # controllo anche a mano se è già presente l'utente che si vuole inserire in modo 
         # da ritornare il tipo di ritorno EXISTS
