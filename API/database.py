@@ -181,6 +181,7 @@ def update_user_info(username,nome,cognome,email,latitudine,longitudine,data):
         session.commit()
         return Return.SUCCESS
     except Exception as e:
+        session.rollback()
         print("[!] - Errore nell'aggiornamento dei dati personali!\n" +
               "      Vedi metodo update_user_info()\n" +
               "      Per maggiori info:\n")
@@ -211,6 +212,7 @@ def register_user(username, nome, cognome, email, password, latitudine, longitud
         # se arrivo qui vuol dire che tutti gli inserimenti sono avvenuti con successo
         return Return.SUCCESS
     except Exception as e:
+        session.rollback()
         print("[!] - Utente già presente nella base di dati o errore nell'inserimento!\n" +
               "      Vedi metodo insert_new_user()\n" +
               "      Per maggiori info:\n")
@@ -226,6 +228,7 @@ def create_new_post(titolo,descrizione,username):
         session.commit()
         return Return.SUCCESS
     except Exception as e:
+        session.rollback()
         print("[!] - Errore nella creazione di un nuovo post!\n" +
               "      Vedi metodo create_new_user()\n" +
               "      Per maggiori info:\n")
@@ -265,6 +268,7 @@ def create_new_message(mittente,destinatario,contenuto):
         session.commit()
         return Return.SUCCESS
     except Exception as e:
+        session.rollback()
         print("[!] - Errore nella creazione di un nuovo messaggio!\n" +
               "      Vedi metodo create_new_message()\n" +
               "      Per maggiori info:\n")
@@ -296,6 +300,7 @@ def get_post(limit, latitude, longitude):
         return make_list_of_dictonary(session.query(Post).limit(limit).all(),"post")
 
     except Exception as e:
+        session.rollback()
         print("[!] - Errore nel caricamento dei post!\n" +
               "      Vedi metodo get_post()\n" +
               "      Per maggiori info:\n")
@@ -364,6 +369,7 @@ def add_image_path(idPost, path):
         session.commit()
 
     except Exception as e:
+        session.rollback()
         print("[!] - Errore nel caricamento della image_path nel DB!\n" +
               "      Vedi metodo add_image_path()\n" +
               "      Per maggiori info:\n")
