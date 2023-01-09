@@ -300,7 +300,7 @@ def get_post(limit, latitude, longitude, username):
     
         # se ha settato un username come filtro ritorno solo i post di quell' user
         if(username != None):
-            query = query.filter(Utente.username == username)
+            query = query.filter(Post.username == username)
             
         # eseguo la query
         return make_list_of_dictonary(query.limit(limit).all(),"post")
