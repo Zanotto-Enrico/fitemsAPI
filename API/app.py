@@ -24,9 +24,10 @@ def index():
 	info += "<h2> /myInfo per aggiornare le mie info personali (POST) (DEVI ESSERE LOGGATO) </h2> "
 	info += "<h4> Passare i parametri che si vole aggiornare scegliendo un insieme tra i seguenti: nome, cognome,data (nascita), email,latitudine, longitudine (in decimale) facendo un POST alla pagina </h4> /myInfo</br></br>"
 	info += "<h2> /post per elencare i post (GET)</h2> </br>"
-	info += "<h4> Per settare un filtro in base al proprietario del post</h4> /post?username=mario01 </br></br>"
 	info += "<h4> Per settare un limite massimo di post elencati</h4> /post?limite=3 </br></br>"
 	info += "<h4> Per settare un filtro basato sulla posizione gps fornire le coordinate in decimale</h4>/post?latitudine=45.1234567&longitudine=13.1234567</br></br>"
+	info += "<h2> /myposts per ottenere tutti i propri post (GET) (DEVI ESSERE LOGGATO) </h2> "
+	info += "<h4> Questa chiamata non ha parametri</h4> /myposts</br></br>"
 	info += "<h2> /makepost per creare un nuovo post (POST) (DEVI ESSERE LOGGATO)</h2>" 
 	info += "<h4> Passare titolo, descrizione, facendo un POST alla pagina </h4> /makepost</br></br>"
 	info += "<h2> /itemfound per chiudere un post aperto (POST) (DEVI ESSERE LOGGATO)</h2>" 
@@ -60,13 +61,18 @@ def utenti():
 			return response('SUCCESS')
 	return response('FAILURE')
 
+@app.route('/myposts', methods=['GET'])
+def myposts():
+	if "user" not in session:
+		return response('FAILURE')
+	return get_post(username=session['user'], limit=100)
+
 @app.route('/post', methods=['GET'])
 def post():
 	limit = request.args.get('limite')
 	longitude = request.args.get('longitudine')
 	latitude = request.args.get('latitudine')
-	username = request.args.get('username')
-	return get_post(limit,latitude,longitude,username)
+	return get_post(limit,latitude,longitude)
 
 @app.route('/register', methods=['POST'])
 def register():
