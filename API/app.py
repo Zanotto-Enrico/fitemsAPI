@@ -26,7 +26,7 @@ def index():
 	info += "<h2> /post per elencare i post (GET)</h2> </br>"
 	info += "<h4> Per settare un limite massimo di post elencati</h4> /post?limite=3 </br></br>"
 	info += "<h4> Per settare un filtro basato sulla posizione gps fornire le coordinate in decimale</h4>/post?latitudine=45.1234567&longitudine=13.1234567</br></br>"
-	info += "<h2> /myposts per ottenere tutti i propri post (GET) (DEVI ESSERE LOGGATO) </h2> "
+	info += "<h2> /myposts per ottenere tutti i propri post (POST) (DEVI ESSERE LOGGATO) </h2> "
 	info += "<h4> Questa chiamata non ha parametri</h4> /myposts</br></br>"
 	info += "<h2> /makepost per creare un nuovo post (POST) (DEVI ESSERE LOGGATO)</h2>" 
 	info += "<h4> Passare titolo, descrizione, facendo un POST alla pagina </h4> /makepost</br></br>"
@@ -61,7 +61,7 @@ def utenti():
 			return response('SUCCESS')
 	return response('FAILURE')
 
-@app.route('/myposts', methods=['GET'])
+@app.route('/myposts', methods=['POST'])
 def myposts():
 	if "user" not in session:
 		return response('FAILURE')
