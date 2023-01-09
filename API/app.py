@@ -1,6 +1,6 @@
 from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from database import *
-from flask import request
+from flask import request, session
 from werkzeug.utils import secure_filename
 import os
 
@@ -10,7 +10,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = "JG{~^VQnAX8dK*4P'=/XTg^rBhH_psx+/zK9#>YkR_bWd7Av"
-session = dict()
 
 
 @app.route('/')
