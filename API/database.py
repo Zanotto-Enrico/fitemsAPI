@@ -275,7 +275,7 @@ def create_new_message(mittente,destinatario,contenuto):
         print(e)
         return Return.FAILURE
 
-def get_post(limit, latitude, longitude):
+def get_post(limit, latitude, longitude, username):
 
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     radius = 500
@@ -286,18 +286,24 @@ def get_post(limit, latitude, longitude):
         limit = int(limit)
 
     try:
+        # creo la query base e la amplio in base ai parametri passati
+        query = session.query(Post)
         # se ha settato un limite in base alla posizione ritorno i risultati filtrati per distanza
         if(latitude != None and longitude != None):
             min_lat  = float(latitude) - (float(radius) / 6378000) * (180 / 3.141592)
             max_lat  = float(latitude) + (float(radius) / 6378000) * (180 / 3.141592)
             min_long = float(longitude) - (float(radius) / 6378000) * (180 / 3.141592) / math.cos(float(latitude) * 3.141592/180)
             max_long = float(longitude) + (float(radius) / 6378000) * (180 / 3.141592) / math.cos(float(latitude) * 3.141592/180)
-            return make_list_of_dictonary(session.query(Post).filter(Utente.username == Post.username).filter(
-                                          Utente.latitudine.between(min_lat,max_lat)).filter(
-                                          Utente.longitudine.between(min_long,max_long)).limit(limit).all(), "post")
+            query = query.filter(Utente.username == Post.username).filter(
+                    Utente.latitudine.between(min_lat,max_lat)).filter(
+                    Utente.longitudine.between(min_long,max_long))
     
-        # altrimenti non filtro in base alla posizione gps
-        return make_list_of_dictonary(session.query(Post).limit(limit).all(),"post")
+        # se ha settato un username come filtro ritorno solo i post di quell' user
+        if(username != None):
+            query = query.filter(Utente.username == username)
+            
+        # eseguo la query
+        return make_list_of_dictonary(query.limit(limit).all(),"post")
 
     except Exception as e:
         session.rollback()

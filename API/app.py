@@ -64,7 +64,8 @@ def post():
 	limit = request.args.get('limite')
 	longitude = request.args.get('longitudine')
 	latitude = request.args.get('latitudine')
-	return get_post(limit,latitude,longitude)
+	latitude = request.args.get('username')
+	return get_post(limit,latitude,longitude,username)
 
 @app.route('/register', methods=['POST'])
 def register():
