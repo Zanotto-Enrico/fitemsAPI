@@ -65,14 +65,14 @@ def utenti():
 def myposts():
 	if "user" not in session:
 		return response('FAILURE')
-	return get_post(username=session['user'], limit=100)
+	return get_post(username=session['user'], limit=100,latitude=None,longitude=None)
 
 @app.route('/post', methods=['GET'])
 def post():
 	limit = request.args.get('limite')
 	longitude = request.args.get('longitudine')
 	latitude = request.args.get('latitudine')
-	return get_post(limit,latitude,longitude)
+	return get_post(limit=limit,latitude=latitude,longitude=longitude,username=None)
 
 @app.route('/register', methods=['POST'])
 def register():
