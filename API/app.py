@@ -102,8 +102,8 @@ def makepost():
 		return response('FAILURE')
 
 	ret = create_new_post(request.form.get('titolo'),request.form.get('descrizione'),session["user"])
-	if(ret == Return.SUCCESS):
-		return response('SUCCESS')
+	if(ret > 0):
+        	return response('SUCCESS:'+str(ret))
 	else:
 		return response('FAILURE' )
 

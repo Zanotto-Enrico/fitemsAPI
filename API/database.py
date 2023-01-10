@@ -28,9 +28,9 @@ Base = declarative_base()
 # viene eseguita una query: può avere successo, può fallire o l'elemento può già esistere 
 # (vedere ad esempio il caso degli utenti)
 class Return(Enum):
-    SUCCESS = 1
-    FAILURE = 2
-    EXISTS = 3
+    SUCCESS = -1
+    FAILURE = -2
+    EXISTS = -3
 
 
 # DEFINIZIONE DELLE CLASSI CHE VANNO A RAPPRESENTARE LE TABELLE DEL DB
@@ -226,7 +226,7 @@ def create_new_post(titolo,descrizione,username):
         new_post = Post(titolo = titolo, descrizione = descrizione, username = username, data = data, stato = 0)
         session.add(new_post)
         session.commit()
-        return Return.SUCCESS
+        return session.query(Post).order_by(desc(Post.id_post)).first()._asdict()["id_post"]
     except Exception as e:
         session.rollback()
         print("[!] - Errore nella creazione di un nuovo post!\n" +
