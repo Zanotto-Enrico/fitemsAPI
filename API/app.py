@@ -166,7 +166,7 @@ def uploadImage():
 		
 	if file and allowed_file(file.filename):
 		post = get_post_by_id(request.form.get('idPost'))
-		filename = "post_" + str(post[1]['id_post'])+'.'+file.filename.rsplit('.', 1)[1].lower()
+		filename = "post_" + str(post['id_post'])+'.'+file.filename.rsplit('.', 1)[1].lower()
 		file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 		add_image_path(idPost= request.form.get('idPost'), path="pictures/"+filename)
 		return response("SUCCESS")
