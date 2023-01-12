@@ -330,7 +330,7 @@ def get_chats(username):
     try:
         return make_list_of_dictonary(session.query(Utente.username
                             ).filter(or_(Utente.username == Messaggio.mittente, Utente.username == Messaggio.destinatario)
-                            ).filter(Utente.username != username).all(),"chats")
+                            ).filter(Utente.username != username).group_by(Utente.username).all(),"chats")
     except Exception as e:
         print("[!] - Errore nel caricamento delle chat!\n" +
               "      Vedi metodo get_chats()\n" +
