@@ -240,11 +240,11 @@ def closePost(idPost,proprietario,cercatore):
     if(idPost != None and idPost != "" and cercatore != proprietario):
         try:
             query = session.query(Post).filter(Post.id_post == idPost)
-            if(query.first()._asdict()['username'] == proprietario or
+            if(query.first()._asdict()['username'] != proprietario or
                query.first()._asdict()['stato'] != 0):
                 return Return.FAILURE
             query.update({'stato': 1})
-            
+
             if(cercatore != None and cercatore != ""):
                 query = session.query(Utente).filter(Utente.username == cercatore)
                 query.update({'punteggio': str(int(query.first()._asdict()['punteggio'])+200)})
