@@ -329,7 +329,7 @@ def get_chats(username):
     if(check_connection() == Return.FAILURE): return Return.FAILURE
     try:
         return make_list_of_dictonary(session.query(Utente.username
-                            ).filter(or_(Utente.username == Messaggio.mittente, Utente.username == Messaggio.destinatario)
+                            ).filter(or_(and_(Utente.username == Messaggio.mittente,Messaggio.destinatario == username),and_(Utente.username == Messaggio.destinatario,Messaggio.mittente == username))
                             ).filter(Utente.username != username).group_by(Utente.username).all(),"chats")
     except Exception as e:
         print("[!] - Errore nel caricamento delle chat!\n" +
