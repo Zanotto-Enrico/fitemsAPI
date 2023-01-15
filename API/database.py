@@ -287,7 +287,7 @@ def get_post(limit, latitude, longitude, username):
 
     try:
         # creo la query base e la amplio in base ai parametri passati
-        query = session.query(Post)
+        query = session.query(Post).filter(Post.stato == 0)
         # se ha settato un limite in base alla posizione ritorno i risultati filtrati per distanza
         if(latitude != None and longitude != None):
             min_lat  = float(latitude) - (float(radius) / 6378000) * (180 / 3.141592)
